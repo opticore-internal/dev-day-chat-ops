@@ -4,8 +4,15 @@ import requests
 from telegram.ext import Application, CommandHandler
 
 
-BOT_TOKEN = os.getenv('BOT_TOKEN', "7076394068:AAFUM4dKLW7h3-E0WALQUkLhZXmsQ9Wv5A8")
-WEATHER_API_KEY = os.getenv('WEATHER_API_KEY', "iFP2iLeFzokjGvhgfpgr0M5oEyMsFVHw")
+BOT_TOKEN = os.getenv("BOT_TOKEN", None)
+WEATHER_API_KEY = os.getenv("WEATHER_API_KEY", None)
+
+if BOT_TOKEN is None:
+    print("Please set the BOT_TOKEN environment variable")
+    exit(1)
+if WEATHER_API_KEY is None:
+    print("Please set the WEATHER_API_KEY environment variable")
+    exit(1)
 
 
 def get_weather(location):
@@ -15,12 +22,7 @@ def get_weather(location):
 
 
 async def send_weather(update, context):
-    try:
-        location = context.args[0]
-    except IndexError:
-        await update.message.reply_text('Please provide a location')
-        return
-
+    location = context.args[0]
     weather = get_weather(location)
     message = f"""
 {location}
@@ -33,15 +35,15 @@ Wind Speed: {weather['data']['values']['windSpeed']}
 
 
 async def start(update, context):
-    await update.message.reply_text('Hello World!')
+    await update.message.reply_text("Hello World!")
 
 
 @click.command()
 def main():
     print("Starting telegram poller...")
     application = Application.builder().token(BOT_TOKEN).build()
-    start_handler = CommandHandler('start', start)
-    weather_handler = CommandHandler('weather', send_weather)
+    start_handler = CommandHandler("start", start)
+    weather_handler = CommandHandler("weather", send_weather)
     application.add_handler(start_handler)
     application.add_handler(weather_handler)
     application.run_polling()

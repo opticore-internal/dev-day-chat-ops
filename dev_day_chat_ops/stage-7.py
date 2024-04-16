@@ -1,6 +1,5 @@
 import os
 import click
-import json
 import requests
 from telegram.ext import Application, CommandHandler
 
@@ -16,17 +15,22 @@ if WEATHER_API_KEY is None:
     exit(1)
 
 
-def get_weather():
-    url = f"https://api.tomorrow.io/v4/weather/realtime?location=london&apikey={WEATHER_API_KEY}"
+def get_weather(location):
+    url = f"https://api.tomorrow.io/v4/weather/realtime?location={location}&apikey={WEATHER_API_KEY}"
     response = requests.get(url)
     return response.json()
 
 
 async def send_weather(update, context):
-    weather = get_weather()
-    print(json.dumps(weather, indent=2))
+    try:
+        location = context.args[0]
+    except IndexError:
+        await update.message.reply_text("Please provide a location")
+        return
+
+    weather = get_weather(location)
     message = f"""
-London
+{location}
 --------------------------------
 Temperature: {weather['data']['values']['temperature']}
 Humidity: {weather['data']['values']['humidity']}

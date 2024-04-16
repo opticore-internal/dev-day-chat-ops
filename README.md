@@ -1,29 +1,30 @@
-# Dev Day 1 - Chat Ops
+# Developer Guide: Creating a Telegram Bot
 
-Welcome to the new Development day at Opticore. We will be looking over how to build a simple telegram bot. The methodologies used here, can be used to create mode chatops in other platforms.
+Welcome to Development Day at Opticore! Today, we will explore how to build a simple Telegram bot. The techniques discussed can be extended to develop chat operations on other platforms as well.
 
-This guide assumes you already have python and pip installed on your system, and you have access to a mobile device with Telegram installed.
+This guide assumes that you have Python and pip installed on your system, and that you have a mobile device with Telegram installed.
 
 ## Installation
 
-1) Create virtual environment
+1) First, install virtualenv if it's not already installed:
 
     ``` bash
     pip install virtualenv
     ```
 
+    Create a virtual environment named venv:
+
     ``` bash
-    # Creates virtual environment called `venv`
     python -m venv venv
     ```
 
-2) Enable virtual environment
+2) Enable virtual environment:
 
     ``` bash
     source ./venv/bin/activate
     ```
 
-3) Install python dependancies
+3) Install python dependancies:
 
     ``` bash
     pip install -r requirements.txt
@@ -31,30 +32,42 @@ This guide assumes you already have python and pip installed on your system, and
 
 ## Development
 
-### Setting up Click (Stage 1 - 2)
+### Stage 1-2: Setting up Click
 
-Click is a python module for creating entrypoints into your application. Click allows you to define functions that can be used from the command line. This is a package built on top of python argparse.
+Click is a Python library for creating command-line interfaces. It simplifies entry point creation for your applications, utilizing decorators to convert ordinary Python functions into CLI commands.
 
-### Creating Basic Bot
+### Stage 3: Creating the Basic Bot
 
-On your mobile device you will need to start a new chat with the `BotFather` (a telegram bot for creating new bots).
+Start a new chat with the BotFather on your Telegram app to create a new bot:
 
-In the chat you will need to type `/newbot`, this will start the process for creating a telegram bot.
+1) Send `/newbot` to BotFather.
+2) Follow the prompts to set your bot’s name and username.
+3) BotFather will provide an HTTP API token upon completion.
 
-The bot will now prompt you for information, name and username. The bot will then respond with a HTTP API key. You then need to set your environment variables with the key.
+Set the bot and API environment variables:
 
 ``` bash
-export BOT_TOKEN=[telegram token]
-export WEATHER_API_KEY=[weather token]
+export BOT_TOKEN=[Your_Telegram_Bot_Token]
+export WEATHER_API_KEY=[Your_Weather_API_Token]
 ```
 
-### Creating Python Poller (Stage 3)
+### Stage 4: Implementing the Python Poller
 
-Using the token from the previous setup you are now ready to create the python poller. Using the telegram python module, using the Application import to create a telegram application. Commands can then be added to the application through the use of the `CommandHandler`.
+With the bot token, initialize your bot using the Python Telegram Bot library. Create a Telegram Application and add command handlers. Ensure functions handling these commands are asynchronous to manage multiple requests simultaneously:
 
-Functions that are used for handlers need to be asynconous to allow multiple requests at the same time. This is done through the `async` keyword before defining your function.
+``` python
+async def command_handler_function():
+    # Implementation goes here
+```
 
-### Adding More Useful Information
+### Stage 5: Adding Weather Query Functionality
 
+Add a function to query weather information. Start with a simple command to fetch weather for a predetermined location like London. Later, enhance it to accept any location as a command argument.
 
-curl --request GET --url 'https://api.tomorrow.io/v4/weather/realtime?location=toronto&apikey=iFP2iLeFzokjGvhgfpgr0M5oEyMsFVHw' --header 'accept: application/json'
+### Stage 6: Customizing Commands
+
+Enable the weather command to accept location input from the user. Modify the existing function to parse this input and fetch weather accordingly.
+
+### Stage 7: Implementing Error Handling
+
+Improve user experience by adding error handling. Use try-except blocks to manage errors gracefully, such as when a user forgets to include necessary command arguments.

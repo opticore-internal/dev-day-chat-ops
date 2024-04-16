@@ -1,45 +1,25 @@
 import os
 import click
-import json
-import requests
 from telegram.ext import Application, CommandHandler
 
 
-BOT_TOKEN = os.getenv('BOT_TOKEN', "7076394068:AAFUM4dKLW7h3-E0WALQUkLhZXmsQ9Wv5A8")
-WEATHER_API_KEY = os.getenv('WEATHER_API_KEY', "iFP2iLeFzokjGvhgfpgr0M5oEyMsFVHw")
+BOT_TOKEN = os.getenv("BOT_TOKEN", None)
+
+if BOT_TOKEN is None:
+    print("Please set the BOT_TOKEN environment variable")
+    exit(1)
 
 
-def get_weather():
-    url = f"https://api.tomorrow.io/v4/weather/realtime?location=london&apikey={WEATHER_API_KEY}"
-    response = requests.get(url)
-    return response.json()
-
-
-async def send_weather(update, context):
-    weather = get_weather()
-    print(json.dumps(weather, indent=2))
-    message = f"""
-London
---------------------------------
-Temperature: {weather['data']['values']['temperature']}
-Humidity: {weather['data']['values']['humidity']}
-Wind Speed: {weather['data']['values']['windSpeed']}
-"""
-    await update.message.reply_text(message)
-
-
-async def start(update, context):
-    await update.message.reply_text('Hello World!')
+async def test(update, context):
+    await update.message.reply_text("Hello World!")
 
 
 @click.command()
 def main():
     print("Starting telegram poller...")
     application = Application.builder().token(BOT_TOKEN).build()
-    start_handler = CommandHandler('start', start)
-    weather_handler = CommandHandler('weather', send_weather)
-    application.add_handler(start_handler)
-    application.add_handler(weather_handler)
+    test_handler = CommandHandler("test", test)
+    application.add_handler(test_handler)
     application.run_polling()
 
 
